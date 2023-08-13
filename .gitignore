@@ -5,3 +5,5 @@
 tags
 demo_app/docs/current
 node_modules/
+*.extension
+demo_app/learning_module/report/server_side_scripting_script_report
