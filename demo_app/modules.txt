@@ -1,2 +1,3 @@
 Demo App
 Learning Module
+Teaching Module
