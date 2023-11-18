@@ -34,7 +34,6 @@ class TestEmail(unittest.TestCase):
         instance.sendmail.assert_called_with("martialmania@gmail.com", "josephmania@gmail.com",ANY)
         instance.quit.assert_called()
     
-    
 if __name__=="__main__":
     unittest.main()
 
