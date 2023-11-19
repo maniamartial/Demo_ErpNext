@@ -1,7 +1,7 @@
 # Copyright (c) 2023, Navari Limited and contributors
 # For license information, please see license.txt
 
-import frappe  # Assuming you are using Frappe framework
+import frappe 
 from frappe import _
 import frappe
 from frappe.utils import flt
@@ -13,20 +13,6 @@ def execute(filters=None):
 	columns = get_columns(filters)
 	data = get_data(filters)
 	return columns, data
-
-
-def fetch_conversion_factors(data, include_uom):
-	conversion_factors = {}
-
-	# Example: populate conversion factors based on your data
-	for row in data:
-		item_code = row.get("item_code")
-		conversion_factor = get_conversion_factor(
-			item_code, include_uom)  # Implement this function
-		conversion_factors[item_code] = conversion_factor
-
-	return conversion_factors
-
 
 def get_columns(filters):
 	columns = [
@@ -546,3 +532,4 @@ def get_valuation_change_sum(item_code, from_date, to_date):
 
 	valuation_change_sum = abs(valuation_change_sum)
 	return flt(valuation_change_sum)
+
