@@ -2,19 +2,9 @@
 # For license information, please see license.txt
 
 import frappe  # Assuming you are using Frappe framework
-from frappe.utils import add_days, flt
-from frappe.utils import flt, add_days
-from frappe.utils import add_days
-from frappe import qb
-from frappe import get_all, get_value
-from frappe import get_all, qb
-from frappe.utils import flt
-
 from frappe import _
 import frappe
-from frappe.utils import flt, getdate, comma_and, cstr
-from erpnext.stock.utils import get_incoming_rate
-
+from frappe.utils import flt
 
 # ... (Previous code remains the same)
 
@@ -300,23 +290,6 @@ def get_query(filters):
 
 
 def get_sales_invoices(item_code, from_date, to_date):
-	# Implement the logic to fetch sales data
-	# sql_query = """
-	# 	SELECT si.posting_date, si.title, si.update_stock, si.name,si.amended_from,
-	# 	(SELECT AVG(sii.stock_qty)
-	# 	 FROM `tabSales Invoice Item` AS sii
-	# 	 WHERE sii.parent = si.name AND sii.item_code = %(item_code)s) as qty
-	# 	FROM `tabSales Invoice` AS si
-	# 	WHERE si.name IN (
-	# 		SELECT sii.parent
-	# 		FROM `tabSales Invoice Item` AS sii
-	# 		WHERE sii.item_code = %(item_code)s AND si.docstatus = 1
-	# 		AND si.status != 'Cancelled'
-	# 		AND si.posting_date >= %(from_date)s AND si.posting_date <= %(to_date)s
-	# 		AND si.return_against IS NULL AND sii.item_code IS NOT NULL
-	# 	)
-	# """
-
 	sale_invoice = frappe.qb.DocType('Sales Invoice')
 	sales_invoice_item = frappe.qb.DocType('Sales Invoice Item')
 
@@ -351,27 +324,27 @@ def get_sales_invoices(item_code, from_date, to_date):
 		)
 
 	result = query.run(as_dict=True)
-	frappe.msgprint(str(result))
+	
  
 	return result
 
 
 def get_stock_entry_valuation(item_code):
-	stock_entry_sql = """
-		SELECT (SELECT AVG(sii.valuation_rate)
-				FROM `tabStock Reconciliation Item` AS sii
-				WHERE sii.parent = st.name AND sii.item_code = %(item_code)s) as valuation_rate
-		FROM `tabStock Reconciliation` AS st
-		WHERE st.name IN (
-			SELECT sii.parent
-			FROM `tabStock Reconciliation Item` AS sii
-			WHERE sii.item_code = %(item_code)s AND st.docstatus = 1
+	stock_reconciliation=frappe.qb.DocType('Stock Reconciliation')
+	stock_reconciliation_item=frappe.qb.DocType('Stock Reconciliation Item')
+ 
+	stock_entry_query=frappe.qb.from_(stock_reconciliation) \
+		.inner_join(stock_reconciliation_item) \
+		.on(stock_reconciliation.name == stock_reconciliation_item.parent) \
+		.select(
+			frappe.qb.functions("Avg", stock_reconciliation_item.valuation_rate).as_("valuation_rate")
+		)\
+		.where(
+      (stock_reconciliation_item.item_code==item_code) &
+      (stock_reconciliation.docstatus==1)
 		)
-	"""
-
-	valuation_data = frappe.db.sql(
-		stock_entry_sql, {"item_code": item_code}, as_dict=True)
-	return valuation_data
+	valuation_rate=stock_entry_query.run(as_dict=True)
+	return valuation_rate
 
 
 def get_stock_ledger_entries(voucher_name, item_code, from_date, to_date):
@@ -398,7 +371,6 @@ def get_stock_ledger_entries(voucher_name, item_code, from_date, to_date):
 
 	sle_entries = frappe.get_all(
 		"Stock Ledger Entry", filters=filters, or_filters=or_filters, fields=fields)
-
 	return sle_entries
 
 
@@ -427,7 +399,6 @@ def get_stock_ledger_entries_recalculate(voucher_name, item_code, from_date, to_
 
 	sle_entries = frappe.get_all(
 		"Stock Ledger Entry", filters=filters, or_filters=or_filters, fields=fields)
-
 	return sle_entries
 
 
@@ -455,7 +426,6 @@ def get_stock_ledger_entries_cancelled_but_amended(voucher_name, item_code, from
 
 	sle_entries = frappe.get_all(
 		"Stock Ledger Entry", filters=filters, or_filters=or_filters, fields=fields)
-
 	return sle_entries
 
 
@@ -470,19 +440,16 @@ def get_delivery_notes(item_code, from_date, to_date):
 
 	delivery_notes = frappe.get_all(
 		"Delivery Note", filters=filters, fields=fields)
-
 	return delivery_notes
 
 
 def get_valuation_change_sum(item_code, from_date, to_date):
-
 	quantity = 0.0
 	used_vouchers = set()
 	valuation_change_sum = 0.0
 	buying_total = 0.0
 	un_used_delivery_note = set()
 	used_delivery_note = set()
-
 	sales_invoices = get_sales_invoices(item_code, from_date, to_date)
 	# Initialize a list to store the titles of Sales Invoices
 
@@ -564,14 +531,15 @@ def get_valuation_change_sum(item_code, from_date, to_date):
 
 				stock_entry_valuation = get_stock_entry_valuation(item_code)
 				if stock_entry_valuation:
-
+        
 					for entry in stock_entry_valuation:
 						valuation_rate = entry.get("valuation_rate")
-						buying_total = valuation_rate*quantity
+						if valuation_rate is not None:
+							buying_total = valuation_rate*quantity
 
-						valuation_change_sum = abs(
-							valuation_change_sum)
-						valuation_change_sum += buying_total
+							valuation_change_sum = abs(
+								valuation_change_sum)
+							valuation_change_sum += buying_total
 
 				else:
 					pass
