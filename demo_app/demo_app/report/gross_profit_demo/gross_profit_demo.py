@@ -310,8 +310,6 @@ def get_sales_invoices(item_code, from_date, to_date):
 		)
 
 	result = query.run(as_dict=True)
-	
- 
 	return result
 
 

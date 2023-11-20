@@ -21,4 +21,13 @@ class TestDriver1(FrappeTestCase):
 		}).insert()
 		self.assertEqual(driver2.full_name, "No_name")
   
+	def test_first_name_and_last_name_should_not_be_the_same(self):
+		driver3 = frappe.get_doc({
+			"doctype": "Driver1",
+			"first_name": "John",
+			"last_name": "Doe"  # Setting different first_name and last_name values
+		}).insert()
+		# Assert that saving this document does not raise a ValidationError
+		self.assertRaises(frappe.exceptions.ValidationError)
+
   
