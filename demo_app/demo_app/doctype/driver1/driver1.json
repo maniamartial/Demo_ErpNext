@@ -8,7 +8,11 @@
  "field_order": [
   "first_name",
   "last_name",
-  "full_name"
+  "full_name",
+  "tab_2_tab",
+  "age",
+  "status",
+  "year_joined"
  ],
  "fields": [
   {
@@ -30,11 +34,32 @@
    "label": "Full Name",
    "read_only": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tab 2"
+  },
+  {
+   "fieldname": "age",
+   "fieldtype": "Int",
+   "label": "Age"
+  },
+  {
+   "default": "0",
+   "fieldname": "status",
+   "fieldtype": "Check",
+   "label": "Status"
+  },
+  {
+   "fieldname": "year_joined",
+   "fieldtype": "Date",
+   "label": "Year Joined"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-16 15:06:18.463832",
+ "modified": "2023-11-22 21:13:34.824715",
  "modified_by": "Administrator",
  "module": "Demo App",
  "name": "Driver1",
