@@ -1,0 +1,36 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-11-24 09:57:29.068897",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "noplate",
+  "amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "noplate",
+   "fieldtype": "Data",
+   "label": "No.plate"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Int",
+   "label": "Amount"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-11-24 09:58:16.958056",
+ "modified_by": "Administrator",
+ "module": "Demo App",
+ "name": "Vehicle Type",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
