@@ -11,7 +11,9 @@ class MyExcept(Exception):
 		self.error_code=error_code
 		
 class Driver1(Document):
+    
 	def before_save(self):
+		# frappe.db.rename_table("Driver1", "Driver2")
 		if self.last_name:
 			self.full_name = self.first_name + " " + self.last_name
 		else:
@@ -28,17 +30,7 @@ class Driver1(Document):
 				frappe.throw("Age cannot be greater than 60")
 		else:
 			frappe.throw("Age is not set or has an invalid value")
-		if self.year_joined and isinstance(self.year_joined, str):
-			try:
-				year_joined_date = datetime.strptime(self.year_joined, '%Y-%m-%d').date()
-				current_date = datetime.strptime(frappe.utils.nowdate(), '%Y-%m-%d').date()
-				
-				if year_joined_date > current_date:
-					frappe.throw("Year Joined cannot be greater than the current year")
-			except ValueError:
-				frappe.throw("Invalid date format for year_joined")
-		else:
-			frappe.throw("Year Joined is not set or has an invalid value")
+		
 	
    
 

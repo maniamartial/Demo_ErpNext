@@ -41,3 +41,5 @@ class TestExamples(TestCase):
         service_checker=ServiceChecker()
         result=service_checker.check_service_status()
         self.assertTrue(result, 'Service is not OK')
+        
+        
