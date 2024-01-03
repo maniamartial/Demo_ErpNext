@@ -44,7 +44,7 @@ class TestDriver1(FrappeTestCase):
 				"year_joined": "2023-12-12"
 
 			}).insert()
-      
+	  
 	def test_year_joined(self):
 		with self.assertRaises(frappe.exceptions.ValidationError, msg="Date Joined cannot be greater than the current year tests"):
 			driver5 = frappe.get_doc({
@@ -55,4 +55,16 @@ class TestDriver1(FrappeTestCase):
 				"year_joined": "2023-12-12"  # Setting year_joined to a future date
 
 			}).insert()
+   
+   
+	def test_autonaming(self):
+		driver6 = frappe.get_doc({
+			"doctype": "Driver1",
+			"first_name": "John",
+			"last_name": "Doe",
+			"age": 34,
+			"year_joined": "2024-12-12"  # Setting year_joined to a future date
+
+		}).insert()
+		self.assertEqual(driver6.name, "Joh-Doe-2024-30-0001")
    
