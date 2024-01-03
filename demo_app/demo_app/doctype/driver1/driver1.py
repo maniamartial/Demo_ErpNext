@@ -1,5 +1,7 @@
 # Copyright (c) 2023, Techmaniacc and contributors
 # For license information, please see license.txt
+from frappe.model.naming import getseries
+
 
 import frappe
 from datetime import datetime
@@ -31,6 +33,17 @@ class Driver1(Document):
 		else:
 			frappe.throw("Age is not set or has an invalid value")
 		
+  
+	def autoname(self):
+		if self.age>30 and self.age<40:
+			prefix = f'{self.first_name[0:3]}-{self.last_name[0:3]}-{datetime.now().year}-30-'
+		if self.age>40 and self.age<50:
+			prefix = f'{self.first_name[0:3]}-{self.last_name[0:3]}-{datetime.now().year}-40-'
+		if self.age>50:
+			prefix = f'{self.first_name[0:3]}-{self.last_name[0:3]}-{datetime.now().year}-50-'
+		self.name = prefix + getseries(prefix, 4)
+
+     
 	
    
 
